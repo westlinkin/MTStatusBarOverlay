@@ -40,6 +40,8 @@ void mt_dispatch_sync_on_main_thread(dispatch_block_t block);
 ////////////////////////////////////////////////////////////////////////
 // macro to check if running on at least iOS 9
 #define kMTIsOperatingSystemAtLeast9 [[NSProcessInfo processInfo] respondsToSelector:@selector(isOperatingSystemAtLeastVersion:)] ? [[NSProcessInfo processInfo] isOperatingSystemAtLeastVersion:(NSOperatingSystemVersion){9.0, 0.0, 0.0}] : NO
+#define kMTIsOperatingSystemAtLeast91 [[NSProcessInfo processInfo] respondsToSelector:@selector(isOperatingSystemAtLeastVersion:)] ? [[NSProcessInfo processInfo] isOperatingSystemAtLeastVersion:(NSOperatingSystemVersion){9.0, 1.0, 0.0}] : NO
+#define kMTIsOperatingSystemAtLeast92 [[NSProcessInfo processInfo] respondsToSelector:@selector(isOperatingSystemAtLeastVersion:)] ? [[NSProcessInfo processInfo] isOperatingSystemAtLeastVersion:(NSOperatingSystemVersion){9.0, 2.0, 0.0}] : NO
 // macro to check if running on at least iOS 8
 #define kMTIsOperatingSystemAtLeast8 [[NSProcessInfo processInfo] respondsToSelector:@selector(isOperatingSystemAtLeastVersion:)] ? [[NSProcessInfo processInfo] isOperatingSystemAtLeastVersion:(NSOperatingSystemVersion){8.0, 0.0, 0.0}] : NO
 // the height of the status bar
@@ -888,9 +890,15 @@ kDetailViewWidth, kHistoryTableRowHeight*kMaxHistoryTableRowCount + kStatusBarHe
         }
     } else if (orientation == UIDeviceOrientationLandscapeLeft) {
         if ((BOOL) (kMTIsOperatingSystemAtLeast9)) {
-            self.transform = CGAffineTransformIdentity;
-            self.frame = CGRectMake(0, 0, MAX(kScreenHeight, kScreenWidth), kScreenHeight);
-            self.smallFrame = CGRectMake(MAX(kScreenHeight, kScreenWidth) - kWidthSmall, 0, kWidthSmall, kStatusBarHeight);
+            if ((BOOL) (kMTIsOperatingSystemAtLeast91) && !(BOOL)(kMTIsOperatingSystemAtLeast92)) {
+                self.transform = CGAffineTransformMakeRotation(pi * (90.f) / 180.0f);
+                self.frame = CGRectMake(kScreenWidth - kStatusBarHeight, 0, kStatusBarHeight, kScreenHeight);
+                self.smallFrame = CGRectMake(MAX(kScreenHeight, kScreenWidth) - kWidthSmall, 0, kWidthSmall, kStatusBarHeight);
+            } else {
+                self.transform = CGAffineTransformIdentity;
+                self.frame = CGRectMake(0, 0, MAX(kScreenHeight, kScreenWidth), kScreenHeight);
+                self.smallFrame = CGRectMake(MAX(kScreenHeight, kScreenWidth) - kWidthSmall, 0, kWidthSmall, kStatusBarHeight);
+            }
         } else {
             self.transform = CGAffineTransformMakeRotation(pi * (90.f) / 180.0f);
             self.frame = CGRectMake(kScreenWidth - kStatusBarHeight, 0, kStatusBarHeight, kScreenHeight);
@@ -898,9 +906,15 @@ kDetailViewWidth, kHistoryTableRowHeight*kMaxHistoryTableRowCount + kStatusBarHe
         }
     } else if (orientation == UIDeviceOrientationLandscapeRight) {
         if ((BOOL) (kMTIsOperatingSystemAtLeast9)) {
-            self.transform = CGAffineTransformIdentity;
-            self.frame = CGRectMake(0, 0, MAX(kScreenHeight, kScreenWidth), kScreenHeight);
-            self.smallFrame = CGRectMake(MAX(kScreenHeight, kScreenWidth) - kWidthSmall, 0.f, kWidthSmall, kStatusBarHeight);
+            if ((BOOL) (kMTIsOperatingSystemAtLeast91) && !(BOOL)(kMTIsOperatingSystemAtLeast92)) {
+                self.transform = CGAffineTransformMakeRotation(pi * (-90.f) / 180.0f);
+                self.frame = CGRectMake(0, 0, MAX(kScreenHeight, kScreenWidth), kScreenHeight);
+                self.smallFrame = CGRectMake(MAX(kScreenHeight, kScreenWidth) - kWidthSmall, 0.f, kWidthSmall, kStatusBarHeight);
+            } else {
+                self.transform = CGAffineTransformIdentity;
+                self.frame = CGRectMake(0, 0, MAX(kScreenHeight, kScreenWidth), kScreenHeight);
+                self.smallFrame = CGRectMake(MAX(kScreenHeight, kScreenWidth) - kWidthSmall, 0.f, kWidthSmall, kStatusBarHeight);
+            }
         } else {
             self.transform = CGAffineTransformMakeRotation(pi * (-90.f) / 180.0f);
             self.frame = CGRectMake(0.f, 0.f, kStatusBarHeight, kScreenHeight);
@@ -908,9 +922,15 @@ kDetailViewWidth, kHistoryTableRowHeight*kMaxHistoryTableRowCount + kStatusBarHe
         }
     } else if (orientation == UIDeviceOrientationPortraitUpsideDown) {
         if ((BOOL) (kMTIsOperatingSystemAtLeast9)) {
-            self.transform = CGAffineTransformIdentity;
-            self.frame = CGRectMake(0.f, 0.f, MIN(kScreenWidth, kScreenHeight), kStatusBarHeight);
-            self.smallFrame = CGRectMake(self.frame.size.width - kWidthSmall, 0.f, kWidthSmall, self.frame.size.height);
+            if ((BOOL) (kMTIsOperatingSystemAtLeast91) && !(BOOL)(kMTIsOperatingSystemAtLeast92)) {
+                self.transform = CGAffineTransformMakeRotation(pi);
+                self.frame = CGRectMake(0.f, kScreenHeight - kStatusBarHeight, MIN(kScreenWidth, kScreenHeight), kStatusBarHeight);
+                self.smallFrame = CGRectMake(self.frame.size.width - kWidthSmall, 0.f, kWidthSmall, self.frame.size.height);
+            } else {
+                self.transform = CGAffineTransformIdentity;
+                self.frame = CGRectMake(0.f, 0.f, MIN(kScreenWidth, kScreenHeight), kStatusBarHeight);
+                self.smallFrame = CGRectMake(self.frame.size.width - kWidthSmall, 0.f, kWidthSmall, self.frame.size.height);
+            }
         } else {
             self.transform = CGAffineTransformMakeRotation(pi);
             self.frame = CGRectMake(0.f, kScreenHeight - kStatusBarHeight, kScreenWidth, kStatusBarHeight);
